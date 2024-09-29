@@ -1,6 +1,7 @@
 <?php
 require_once './database.php';
 include_once('./header.php');
+$route = 'courses';
 ?>
 
 <?php

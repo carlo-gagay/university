@@ -1,6 +1,6 @@
 <?php
 require_once './database.php';
-$route = 'students';
+$route = 'enrollments';
 ?>
 
 <?php
@@ -11,7 +11,7 @@ $done = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $conn = new mysqli($host, $username, $password, $database);
     $id = $_POST['id'];
-    $sql = "DELETE FROM students WHERE student_id=$id";
+    $sql = "DELETE FROM enrollments WHERE enrollment_id=$id";
 
     if ($conn->query($sql)) {
         $done = 'success';
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $conn->close();
 }
 
-require_once './database/students.php';
+require_once './database/enrollments.php';
 ?>
 
 <div class="flex items-start w-full">
@@ -41,7 +41,7 @@ require_once './database/students.php';
                 <?php endif; ?>
                 <div class="w-full">
                     <a
-                        href="./student.php"
+                        href="./enrollment.php"
                         class="px-4 py-2 rounded bg-blue-500 text-white font-bold ml-auto"
                     >
                         Add
@@ -50,37 +50,43 @@ require_once './database/students.php';
                 <table class="w-full">
                     <thead>
                         <tr>
-                            <th class="text-start px-2 py-4">Student ID</th>
-                            <th class="text-start px-2 py-4">First Name</th>
-                            <th class="text-start px-2 py-4">Last Name</th>
-                            <th class="text-start px-2 py-4">Date of Birth</th>
-                            <th class="text-start px-2 py-4">Email</th>
+                            <th class="text-start px-2 py-4">Enrollment ID</th>
+                            <th class="text-start px-2 py-4">Course Name</th>
+                            <th class="text-start px-2 py-4">Student</th>
+                            <th class="text-start px-2 py-4">Date Enrolled</th>
                             <th class="text-start px-2 py-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($students as $student): ?>
+                        <?php foreach ($enrollments as $enrollment): ?>
                             <tr>
                                 <td class="px-2 py-4 border-t border-slate-200">
-                                    <?php echo $student['student_id']; ?>
+                                    <?php echo $enrollment['enrollment_id']; ?>
                                 </td>
                                 <td class="px-2 py-4 border-t border-slate-200">
-                                    <?php echo $student['first_name']; ?>
+                                    <div>
+                                        <?php echo $enrollment['course_name']; ?>
+                                    </div>
+                                    <small>
+                                        <?php echo $enrollment['department']; ?>
+                                    </small>
                                 </td>
                                 <td class="px-2 py-4 border-t border-slate-200">
-                                    <?php echo $student['last_name']; ?>
+                                    <div>
+                                        <?php echo $enrollment['last_name'] . ', ' . $enrollment['first_name']; ?>
+                                    </div>
+                                    <small>
+                                        <?php echo $enrollment['email']; ?>
+                                    </small>
                                 </td>
                                 <td class="px-2 py-4 border-t border-slate-200">
-                                    <?php echo $student['dob']; ?>
-                                </td>
-                                <td class="px-2 py-4 border-t border-slate-200">
-                                    <?php echo $student['email']; ?>
+                                    <?php echo $enrollment['enrollment_date']; ?>
                                 </td>
                                 <td class="px-2 py-4 border-t border-slate-200">
                                     <div class="flex flex-col items-start gap-1">
-                                        <a href="./student.php?student_id='<?php echo $student['student_id']; ?>'" class="p-2 rounded bg-orange-200">Edit</a>
+                                        <a href="./enrollment.php?enrollment_id='<?php echo $enrollment['enrollment_id']; ?>'" class="p-2 rounded bg-orange-200">Edit</a>
                                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-                                            <input type="hidden" name="id" value="<?php echo $student['student_id']; ?>" />
+                                            <input type="hidden" name="id" value="<?php echo $enrollment['enrollment_id']; ?>" />
                                             <button type="submit" class="p-2 rounded bg-red-300">Delete</button>
                                         </form>
                                     </div>
