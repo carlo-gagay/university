@@ -78,10 +78,10 @@ require_once './database/professors.php';
                                 </td>
                                 <td class="px-2 py-4 border-t border-slate-200">
                                     <div class="flex flex-col items-start gap-1">
-                                        <a href="./professor.php?professor_id='<?php echo $professor['professor_id']; ?>'" class="p-2 rounded bg-orange-200">Edit</a>
+                                        <a href="./professor.php?professor_id='<?php echo $professor['professor_id']; ?>'" class="p-2 rounded bg-orange-500">Edit</a>
                                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                                             <input type="hidden" name="id" value="<?php echo $professor['professor_id']; ?>" />
-                                            <button type="submit" class="p-2 rounded bg-red-300">Delete</button>
+                                            <button type="submit" class="p-2 rounded bg-red-500 text-white">Delete</button>
                                         </form>
                                     </div>
                                 </td>

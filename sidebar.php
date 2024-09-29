@@ -1,4 +1,4 @@
-<aside class="border-r border-slate-200 w-[480px] h-[calc(100vh-88px)] py-8">
+<aside class="border-r border-slate-200 min-h-[calc(100vh-88px)] py-8" style="width: 280px; min-width: 280px">
     <div class="flex flex-col">
         <a
             href="./index.php"
