@@ -10,23 +10,21 @@ $id = null;
 
 $conn = new mysqli($host, $username, $password, $database);
 
-$firstName = $lastName = $email = $dob = '';
+$courseName = $credits = $department = '';
 
-if (isset($_GET['student_id']) && $_GET['student_id']) {
+if (isset($_GET['course_id']) && $_GET['course_id']) {
     $isUpdate = TRUE;
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !$isUpdate) {
-    $firstName = $_POST['first_name'];
-    $lastName = $_POST['last_name'];
-    $email = $_POST['email'];
-    $dob = $_POST['dob'];
+    $courseName = $_POST['course_name'];
+    $credits = $_POST['credits'];
+    $department = $_POST['department'];
 
     if (
-        empty($firstName)
-        || empty($lastName)
-        || empty($email)
-        || empty($dob)
+        empty($courseName)
+        || empty($credits)
+        || empty($department)
     ) {
         $done = 'missing';
     } else {
@@ -35,42 +33,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$isUpdate) {
         }
 
         $sql = "
-            INSERT INTO students (first_name, last_name, dob, email)
-            VALUES ('{$firstName}', '{$lastName}', '{$dob}', '{$email}')
+            INSERT INTO courses (course_name, credits, department)
+            VALUES ('{$courseName}', '{$credits}', '{$department}')
         ";
 
         if ($conn->query($sql)) {
             $done = 'success';
-            $firstName = $lastName = $dob = $email = '';
+            $courseName = $credits = $department = '';
         } else {
             $done = 'failed';
         }
     }
 } else {
-    if (isset($_GET['student_id'])) {
-        $id = $_GET['student_id'];
-        $sql = "SELECT * FROM students WHERE student_id=$id";
+    if (isset($_GET['course_id'])) {
+        $id = $_GET['course_id'];
+        $sql = "SELECT * FROM courses WHERE course_id=$id";
 
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $firstName = $row['first_name'];
-                $lastName = $row['last_name'];
-                $email = $row['email'];
-                $dob = $row['dob'];
+                $courseName = $row['course_name'];
+                $credits = $row['credits'];
+                $department = $row['department'];
             }
         }
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $id = $_POST['id'];
-        $firstName = $_POST['first_name'];
-        $lastName = $_POST['last_name'];
-        $email = $_POST['email'];
-        $dob = $_POST['dob'];
+        $courseName = $_POST['course_name'];
+        $credits = $_POST['credits'];
+        $department = $_POST['department'];
 
-        $sql = "UPDATE students SET first_name='$firstName', last_name='$lastName', email='$email', dob='$dob' WHERE student_id=$id";
+        $sql = "UPDATE courses SET course_name='$courseName', credits='$credits', department='$department' WHERE course_id=$id";
         
         if ($conn->query($sql)) {
             $done = 'success';
@@ -90,17 +86,17 @@ $conn->close();
             <div class="rounded-lg p-8 border border-slate-200">
                 <legend class="text-xl font-bold mb-4">
                     <?php if ($isUpdate): ?>
-                        Update Student
+                        Update Course
                     <?php else: ?>
-                        Add New Student
+                        Add New Course
                     <?php endif; ?>
                 </legend>
                 <?php if ($done == 'success'): ?>
                     <div class="py-4 px-2 mb-4 bg-green-500 text-white rounded">
                         <?php if($isUpdate): ?>
-                            Student updated! See <a href="./index.php" class="text-blue-500">list</a>
+                            Course updated! See <a href="./courses.php" class="text-blue-500">list</a>
                         <?php else: ?>
-                            New student added! See <a href="./index.php" class="text-blue-500">list</a>
+                            New student added! See <a href="./courses.php" class="text-blue-500">list</a>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
@@ -114,55 +110,43 @@ $conn->close();
                         Required field is missing!
                     </div>
                 <?php endif; ?>
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><?php if ($isUpdate): echo "?student_id=$id"; endif; ?>" method="POST">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><?php if ($isUpdate): echo "?course_id=$id"; endif; ?>" method="POST">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <div class="flex flex-col gap-y-4">
                         <div class="block flex flex-col gap-y-2">
-                            <label for="first_name">First Name</label>
+                            <label for="course_name">Course Name</label>
                             <input
                                 type="text"
-                                name="first_name"
-                                placeholder="First Name"
-                                id="first_name"
+                                name="course_name"
+                                placeholder="Course Name"
+                                id="course_name"
                                 required
                                 class="border border-slate-500 focus:outline-blue-500 px-4 py-2 rounded"
-                                value="<?php echo $firstName ?>"
+                                value="<?php echo $courseName ?>"
                             />
                         </div>
                         <div class="block flex flex-col gap-y-2">
-                            <label for="last_name">Last Name</label>
+                            <label for="credits">Credits</label>
+                            <input
+                                type="number"
+                                name="credits"
+                                placeholder="Credits"
+                                id="credits"
+                                required
+                                class="border border-slate-500 focus:outline-blue-500 px-4 py-2 rounded"
+                                value="<?php echo $credits ?>"
+                            />
+                        </div>
+                        <div class="block flex flex-col gap-y-2">
+                            <label for="department">Department</label>
                             <input
                                 type="text"
-                                name="last_name"
-                                placeholder="Last Name"
-                                id="last_name"
+                                name="department"
+                                placeholder="Department"
+                                id="department"
                                 required
                                 class="border border-slate-500 focus:outline-blue-500 px-4 py-2 rounded"
-                                value="<?php echo $lastName ?>"
-                            />
-                        </div>
-                        <div class="block flex flex-col gap-y-2">
-                            <label for="email">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                id="email"
-                                required
-                                class="border border-slate-500 focus:outline-blue-500 px-4 py-2 rounded"
-                                value="<?php echo $email ?>"
-                            />
-                        </div>
-                        <div class="block flex flex-col gap-y-2">
-                            <label for="dob">Date of Birth</label>
-                            <input
-                                type="date"
-                                name="dob"
-                                placeholder="Date of Birth"
-                                id="dob"
-                                required
-                                class="border border-slate-500 focus:outline-blue-500 px-4 py-2 rounded"
-                                value="<?php echo $dob ?>"
+                                value="<?php echo $department ?>"
                             />
                         </div>
                         <button type="submit" class="bg-blue-500 rounded w-fit ml-auto px-4 py-2 text-white mt-4">

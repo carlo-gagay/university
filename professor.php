@@ -10,9 +10,9 @@ $id = null;
 
 $conn = new mysqli($host, $username, $password, $database);
 
-$firstName = $lastName = $email = $dob = '';
+$firstName = $lastName = $email = $department = '';
 
-if (isset($_GET['student_id']) && $_GET['student_id']) {
+if (isset($_GET['professor_id']) && $_GET['professor_id']) {
     $isUpdate = TRUE;
 }
 
@@ -20,13 +20,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$isUpdate) {
     $firstName = $_POST['first_name'];
     $lastName = $_POST['last_name'];
     $email = $_POST['email'];
-    $dob = $_POST['dob'];
+    $department = $_POST['department'];
 
     if (
         empty($firstName)
         || empty($lastName)
         || empty($email)
-        || empty($dob)
+        || empty($department)
     ) {
         $done = 'missing';
     } else {
@@ -35,21 +35,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$isUpdate) {
         }
 
         $sql = "
-            INSERT INTO students (first_name, last_name, dob, email)
-            VALUES ('{$firstName}', '{$lastName}', '{$dob}', '{$email}')
+            INSERT INTO professors (first_name, last_name, department, email)
+            VALUES ('{$firstName}', '{$lastName}', '{$department}', '{$email}')
         ";
 
         if ($conn->query($sql)) {
             $done = 'success';
-            $firstName = $lastName = $dob = $email = '';
+            $firstName = $lastName = $department = $email = '';
         } else {
             $done = 'failed';
         }
     }
 } else {
-    if (isset($_GET['student_id'])) {
-        $id = $_GET['student_id'];
-        $sql = "SELECT * FROM students WHERE student_id=$id";
+    if (isset($_GET['professor_id'])) {
+        $id = $_GET['professor_id'];
+        $sql = "SELECT * FROM professors WHERE professor_id=$id";
 
         $result = $conn->query($sql);
 
@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$isUpdate) {
                 $firstName = $row['first_name'];
                 $lastName = $row['last_name'];
                 $email = $row['email'];
-                $dob = $row['dob'];
+                $department = $row['department'];
             }
         }
     }
@@ -68,9 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$isUpdate) {
         $firstName = $_POST['first_name'];
         $lastName = $_POST['last_name'];
         $email = $_POST['email'];
-        $dob = $_POST['dob'];
+        $department = $_POST['department'];
 
-        $sql = "UPDATE students SET first_name='$firstName', last_name='$lastName', email='$email', dob='$dob' WHERE student_id=$id";
+        $sql = "UPDATE professors SET first_name='$firstName', last_name='$lastName', email='$email', department='$department' WHERE professor_id=$id";
         
         if ($conn->query($sql)) {
             $done = 'success';
@@ -90,17 +90,17 @@ $conn->close();
             <div class="rounded-lg p-8 border border-slate-200">
                 <legend class="text-xl font-bold mb-4">
                     <?php if ($isUpdate): ?>
-                        Update Student
+                        Update Professor
                     <?php else: ?>
-                        Add New Student
+                        Add New Professor
                     <?php endif; ?>
                 </legend>
                 <?php if ($done == 'success'): ?>
                     <div class="py-4 px-2 mb-4 bg-green-500 text-white rounded">
                         <?php if($isUpdate): ?>
-                            Student updated! See <a href="./index.php" class="text-blue-500">list</a>
+                            Professor updated! See <a href="./professors.php" class="text-blue-500">list</a>
                         <?php else: ?>
-                            New student added! See <a href="./index.php" class="text-blue-500">list</a>
+                            New professor added! See <a href="./professors.php" class="text-blue-500">list</a>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
@@ -114,7 +114,7 @@ $conn->close();
                         Required field is missing!
                     </div>
                 <?php endif; ?>
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><?php if ($isUpdate): echo "?student_id=$id"; endif; ?>" method="POST">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?><?php if ($isUpdate): echo "?professor_id=$id"; endif; ?>" method="POST">
                     <input type="hidden" name="id" value="<?php echo $id; ?>">
                     <div class="flex flex-col gap-y-4">
                         <div class="block flex flex-col gap-y-2">
@@ -154,15 +154,15 @@ $conn->close();
                             />
                         </div>
                         <div class="block flex flex-col gap-y-2">
-                            <label for="dob">Date of Birth</label>
+                            <label for="department">Department</label>
                             <input
-                                type="date"
-                                name="dob"
+                                type="text"
+                                name="department"
                                 placeholder="Date of Birth"
-                                id="dob"
+                                id="department"
                                 required
                                 class="border border-slate-500 focus:outline-blue-500 px-4 py-2 rounded"
-                                value="<?php echo $dob ?>"
+                                value="<?php echo $department ?>"
                             />
                         </div>
                         <button type="submit" class="bg-blue-500 rounded w-fit ml-auto px-4 py-2 text-white mt-4">
